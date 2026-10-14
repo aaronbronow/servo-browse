@@ -1,6 +1,4 @@
 [env]
-LIBCLANG_PATH = "/usr/lib/llvm-18/lib"
-PKG_CONFIG_PATH = "/home/aaron/.local/usr/lib/x86_64-linux-gnu/pkgconfig"
-BINDGEN_EXTRA_CLANG_ARGS = "-I/home/aaron/.local/usr/lib/llvm-18/lib/clang/18/include"
 CXXFLAGS = "-include stddef.h"
 SERVO_STYLE_THREAD_STACK_SIZE_KB = "8192"
+
