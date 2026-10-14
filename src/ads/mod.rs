@@ -15,6 +15,16 @@ pub enum IabStandard {
     WideSkyscraper,
     /// 970 x 250 Billboard (premium top takeover)
     Billboard,
+    /// 970 x 90 Super Leaderboard
+    SuperLeaderboard,
+    /// 468 x 60 Traditional Banner
+    Banner,
+    /// 250 x 250 Square
+    Square,
+    /// 1200 x 100 Desktop Linkset / Wide Banner
+    DesktopLinkset,
+    /// 1200 x 250 Premium Masthead
+    Masthead,
     /// 320 x 50 Mobile Leaderboard / Banner (mobile headers/footers)
     MobileBanner,
     /// 320 x 100 Large Mobile Banner
@@ -31,6 +41,11 @@ impl IabStandard {
             (300, 600) => Some(Self::HalfPage),
             (160, 600) => Some(Self::WideSkyscraper),
             (970, 250) => Some(Self::Billboard),
+            (970, 90) => Some(Self::SuperLeaderboard),
+            (468, 60) => Some(Self::Banner),
+            (250, 250) => Some(Self::Square),
+            (1200, 100) => Some(Self::DesktopLinkset),
+            (1200, 250) => Some(Self::Masthead),
             (320, 50) => Some(Self::MobileBanner),
             (320, 100) => Some(Self::LargeMobileBanner),
             _ => None,
@@ -46,6 +61,11 @@ impl IabStandard {
             Self::HalfPage => "Half-Page (300x600)",
             Self::WideSkyscraper => "Wide Skyscraper (160x600)",
             Self::Billboard => "Billboard (970x250)",
+            Self::SuperLeaderboard => "Super Leaderboard (970x90)",
+            Self::Banner => "Banner (468x60)",
+            Self::Square => "Square (250x250)",
+            Self::DesktopLinkset => "Desktop Linkset (1200x100)",
+            Self::Masthead => "Masthead (1200x250)",
             Self::MobileBanner => "Mobile Banner (320x50)",
             Self::LargeMobileBanner => "Large Mobile Banner (320x100)",
         }

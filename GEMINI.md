@@ -30,23 +30,26 @@ Headless agentic browser engine based on upstream Servo (`servo = "0.5.0"`), opt
 ## 2. Verified Live Testbeds
 
 ### Google Publisher Tag (GPT) Sample Pages (No Bot Blocks)
-- **Display Test Ad (300×250 Medium Rectangle)**:
+- **Display Test Ad (300×250 Medium Rectangle) with Visual Ad Cropping**:
   ```bash
-  cargo run --quiet -- "https://googleads.github.io/google-publisher-tag-samples/display-test-ad/js/demo.html" --format tui
+  cargo run --quiet -- "https://googleads.github.io/google-publisher-tag-samples/display-test-ad/js/demo.html" --crop-ads --format json | jq .
   ```
+  Extracts Google Ad Manager redirect click URL, creative alt text `"Google Chrome Ad"`, and crops the creative to `.agent/artifacts/ads/`.
 - **Ad Sizes (Multi-unit Responsive)**:
   ```bash
   cargo run --quiet -- "https://googleads.github.io/google-publisher-tag-samples/ad-sizes/js/demo.html" --format json
   ```
 
+### Anti-Bot & Commercial Properties
+- **Expedia**: Intercepts DataDome / Akamai Bot challenge, flags `bot_mitigation.challenge_detected = true`, provider `"DataDome"`, and renders Lynx top warning box.
+- **Allrecipes**: Executes JS challenge via Servo engine and loads full content and 196+ links.
+- **Eater Seattle (Vox Media)**: Resolves OneTrust CMP opt-in and IAB TCF `__tcfapi` automatically, filtering out cookie disclaimers and extracting 145+ links and clean guide content:
+  ```bash
+  cargo run --quiet -- "https://seattle.eater.com/maps/best-ice-cream-seattle" --consent opt-in --format tui
+  ```
+
 ### Local Fixtures
 - `fixtures/iab_sample.html`: Contains static 728×90 Leaderboard and 300×250 Medium Rectangle with anchor links.
-
-### Commercial Anti-Bot Notes
-- Commercial properties often run edge bot challenges before serving content or ad tags:
-  - **Expedia**: Uses Akamai Bot Manager (`root-challenge` / `captcha-pwa`), returns `HTTP 429` with challenge scripts.
-  - **Allrecipes**: Uses Cloudflare Turnstile (`cf-mitigated: challenge`), returns `HTTP 403`.
-- Inspecting live commercial ads requires the full SpiderMonkey JS engine and browser environment emulation (Phase 4 & 5) to solve challenges and execute in-page ad auctions.
 
 ---
 
@@ -56,14 +59,17 @@ Headless agentic browser engine based on upstream Servo (`servo = "0.5.0"`), opt
 # Set environment
 source "$HOME/.cargo/env"
 
-# Run test suite
+# Run test suite (0.35s)
 cargo test
 
-# Run TUI extraction
-cargo run --quiet -- "https://example.com" --format tui
+# Full headless browsing with JS + layout (Default engine)
+cargo run --quiet -- "https://googleads.github.io/google-publisher-tag-samples/display-test-ad/js/demo.html" --format tui
 
-# Run JSON extraction
-cargo run --quiet -- "https://example.com" --format json | jq .
+# JSON output with ad perception & creative cropping
+cargo run --quiet -- "https://googleads.github.io/google-publisher-tag-samples/display-test-ad/js/demo.html" --crop-ads --format json | jq .
+
+# Fast static mode (no JS, lightweight HTTP parsing)
+cargo run --quiet -- "https://example.com" --engine fast --format tui
 
 # Scope extraction to specific DOM subtree
 cargo run --quiet -- "https://en.wikipedia.org/wiki/Lynx_(web_browser)" --format tui --selector "main"

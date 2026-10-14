@@ -17,6 +17,57 @@ pub struct PageMetadata {
     pub title: String,
     pub http_status: u16,
     pub viewport: (u32, u32),
+    pub bot_mitigation: Option<BotMitigation>,
+}
+
+/// Detailed diagnostic information when an anti-bot or CAPTCHA challenge is encountered.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BotMitigation {
+    /// True if an active edge barrier, CAPTCHA, or challenge was detected
+    pub challenge_detected: bool,
+    /// Known mitigation vendor (e.g. "DataDome", "Cloudflare Turnstile", "Akamai Bot Manager", "reCAPTCHA")
+    pub provider: Option<String>,
+    /// Classification of the barrier
+    pub challenge_type: ChallengeType,
+    /// Whether ad perception was suppressed due to this barrier
+    pub ads_suppressed: bool,
+    /// Specific fingerprint evidence that triggered detection
+    pub evidence: Vec<String>,
+    /// Actionable directive for the LLM agent
+    pub agent_advice: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum ChallengeType {
+    /// Interactive challenge (puzzle, slider, checkbox, Turnstile)
+    InteractiveCaptcha,
+    /// Computational / JS proof-of-work challenge
+    JsChallenge,
+    /// IP reputation or rate-limit block (HTTP 429)
+    RateLimited,
+    /// Hard access block (HTTP 403)
+    AccessDenied,
+    /// Generic bot challenge
+    GenericChallenge,
+}
+
+/// User consent preference for GDPR / Cookie Consent Management Platforms (CMP).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, clap::ValueEnum, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ConsentChoice {
+    /// Automatically accept all cookies and grant IAB TCF / CMP consent
+    OptIn,
+    /// Automatically reject optional cookies / CMP consent
+    OptOut,
+    /// Do not intervene in CMP lifecycle
+    Ignore,
+}
+
+impl Default for ConsentChoice {
+    fn default() -> Self {
+        ConsentChoice::OptIn
+    }
 }
 
 /// A hyperlink extracted from the document with an assigned index for reference.

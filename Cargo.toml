@@ -18,9 +18,19 @@ scraper = "0.22"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls-native-roots", "gzip", "brotli"] }
 url = "2.5"
 regex = "1.10"
+crossbeam-channel = "0.5"
+dpi = "0.1"
+servo = { version = "0.5.0", default-features = false, features = ["baked-in-resources", "bundled_freetype", "js_jit"] }
+embedder_traits = { package = "servo-embedder-traits", version = "0.5.0" }
+rustls = { version = "0.23", default-features = false, features = ["ring"] }
+
+[profile.dev]
+debug = 0
+strip = "debuginfo"
 
 [profile.release]
 opt-level = 3
 lto = true
 codegen-units = 1
 strip = true
+
